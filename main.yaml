@@ -1,0 +1,6 @@
+- name: Create VMs
+  import_playbook: tf-apply.yaml
+- name: Instantiate Inventory.ini
+  import_playbook: 98.yaml
+- name: Add nodes ssh keys to local and add node mappings of ip and hostname to /etc/hosts
+  import_playbook: 99.yaml

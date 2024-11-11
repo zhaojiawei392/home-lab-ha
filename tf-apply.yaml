@@ -1,0 +1,47 @@
+---
+- name: Create VMs
+  hosts: localhost
+  become: true
+  gather_facts: false
+  vars:
+    path: "/home/kai/Projects/ha-cluster"
+  tasks:
+
+    - name: Terraform init
+      ansible.builtin.command:
+        cmd: terraform init
+        chdir: "{{ path }}"
+      register: init_output
+      changed_when: init_output.rc != 0
+
+    - name: Destroy old VMs
+      ansible.builtin.command:
+        cmd: terraform destroy -auto-approve
+        chdir: "{{ path }}"
+      register: destroy_output
+      changed_when: destroy_output.rc != 0
+
+    - name: Terraform fmt
+      ansible.builtin.command:
+        cmd: terraform fmt
+        chdir: "{{ path }}"
+      register: fmt_output
+      changed_when: fmt_output.rc != 0
+
+    - name: Terraform validate
+      ansible.builtin.command:
+        cmd: terraform validate
+        chdir: "{{ path }}"
+      register: validate_output
+      changed_when: validate_output.rc != 0
+
+    - name: Terraform apply
+      ansible.builtin.command:
+        cmd: terraform apply -auto-approve -lock-timeout=2m
+        chdir: "{{ path }}"
+      register: apply_output
+      changed_when: apply_output.rc != 0
+
+    - name: Wait for the VMs to complete starting
+      ansible.builtin.pause:
+        seconds: 30

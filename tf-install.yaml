@@ -1,0 +1,14 @@
+---
+- name: Install terraform
+  hosts: localhost
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Add HashiCorp repository
+      shell: |
+        sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+    - name: Install Terraform
+      shell: |
+        sudo dnf install -y terraform
+

@@ -1,0 +1,4 @@
+[all]
+{% for node in nodes %}
+{{ node.hostname }} ansible_host="{{ node.ip }}"
+{% endfor %}

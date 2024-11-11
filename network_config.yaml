@@ -1,0 +1,12 @@
+---
+gateway: "192.168.0.1"
+dns: 
+  - "192.168.0.1"
+cidr: 24
+nodes:
+  - ip: "192.168.0.111"
+    hostname: "node1"
+  - ip: "192.168.0.112"
+    hostname: "node2"
+  - ip: "192.168.0.113"
+    hostname: "node3"

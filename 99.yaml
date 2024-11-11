@@ -1,0 +1,43 @@
+---
+- name: Add nodes ssh public keys to localhost
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - network_config.yaml
+  tasks:
+
+    - name: Ensure .ssh directory exists
+      ansible.builtin.file:
+        path: /root/.ssh
+        state: directory
+        mode: '0700'
+
+    - name: Ensure known_hosts file exists
+      ansible.builtin.file:
+        path: /root/.ssh/known_hosts
+        state: touch
+        mode: '0644'
+
+    - name: Get SSH keys from nodes
+      ansible.builtin.command: ssh-keyscan {{ item.ip }}
+      register: ssh_keys
+      loop: "{{ nodes }}"
+      changed_when: false
+
+    - name: Add SSH keys to known_hosts
+      ansible.builtin.lineinfile:
+        path: /root/.ssh/known_hosts
+        line: "{{ item.stdout }}"
+        create: true
+        mode: "0644"
+      loop: "{{ ssh_keys.results }}"
+      when: item.stdout != ""
+
+    - name: Add nodes to /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ item.ip }} {{ item.hostname }}"
+        create: true
+        mode: "0644"
+      loop: "{{ nodes }}"

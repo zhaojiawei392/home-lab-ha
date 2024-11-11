@@ -1,0 +1,12 @@
+---
+- name: Convert network_config.yaml to inventory.ini
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - network_config.yaml
+  tasks:
+    - name: Parse network_config.yaml and generate inventory.ini
+      ansible.builtin.template:
+        src: inventory.ini.j2
+        dest: inventory.ini
+        mode: '0644'
